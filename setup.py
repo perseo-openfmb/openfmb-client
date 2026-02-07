@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="openfmb-client",            # Nombre para pip
-    version="0.1.0",
+    version="0.2.0",
     description="Cliente Python para interactuar con la API de OpenFMB en microgrids",
     author="Kevin Martinez",
     author_email="kevin9907martinez@gmail.com",
@@ -15,5 +15,5 @@ setup(
         "uuid",                     # Para manejo de UUIDs
         "pandas"                    # Sugerencia: Si vas a añadir soporte para DataFrames
     ],
-    python_requires=">=3.10",
+    python_requires=">=3.8",
 )
