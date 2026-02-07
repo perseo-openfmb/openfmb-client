@@ -15,4 +15,6 @@ Diseñada para integrarse en lazos de control, scripts de automatización y note
 La librería se instala directamente desde el repositorio de GitHub utilizando `pip`. Se recomienda el uso de entornos virtuales (`venv` o `conda`).
 
 ```bash
-pip install git+[https://github.com/perseo-openfmb/openfmb-client.git](https://github.com/perseo-openfmb/openfmb-client.git)
+pip install git+https://github.com/perseo-openfmb/openfmb-client.git
+
+
