@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="openfmb-client",            # Nombre para pip
-    version="0.3.0",
+    version="0.4.0",
     description="Cliente Python para interactuar con la API de OpenFMB en microgrids",
     author="Kevin Martinez",
     author_email="kevin9907martinez@gmail.com",
