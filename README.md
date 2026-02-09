@@ -46,42 +46,36 @@ El siguiente script muestra cómo inicializar el cliente, verificar la conexión
 
 ```python
 from openfmb_client.client import OpenFMBClient, OpenFMBError
-from datetime import datetime, timedelta
 
-# 1. Configuración e Inicialización
-# Nota: Reemplaza la URL con la dirección de tu API
-client = OpenFMBClient(base_url="[http://172.28.16.179:8000/](http://172.28.16.179:8000/)")
+# 1. Initialize
+client = OpenFMBClient(base_url="http://172.28.16.179:8000/")
 
-# 2. Verificar conexión (Buena práctica antes de iniciar lazos de control)
+# 2. Check connection (Good practice before control loops)
 if not client.check_health():
-    print("❌ El sistema está caído (System is down)")
+    print("System is down!")
     exit(1)
 
-# 3. Obtención de Datos
+# 3. Get Data
 try:
-    # --- Ejemplo A: Chequeo de control en tiempo real ---
-    target_uuid = "00000001-0001-0020-0000-000000000001" # UUID del dispositivo objetivo
-    
+    # Example: Real-time control check
+    target_uuid = "00000001-0001-0020-0000-000000000001" # Replace with real UUID
     last_state = client.get_last_state(target_uuid)
-    voltage = last_state['data'].get('voltage', 'N/A')
-    print(f"⚡ Voltaje Actual: {voltage}")
+    print(f"Current Voltage: {last_state['data'].get('voltage', 'N/A')}")
     
-    # --- Ejemplo B: Análisis de históricos ---
+    # Example: Historical for Analysis
+    from datetime import datetime, timedelta
     history = client.get_historical_data(
         target_uuid, 
         limit=50,
         start=datetime.now() - timedelta(hours=1)
     )
-    
-    print(f"📊 Registros recuperados: {len(history)}")
-    if history:
-        print(f"   Fecha del primer dato: {history[0]['timestamp']}")
+    print(f"Retrieved {len(history)} records.")
+    print(f"First record timestamp: {history[0]['timestamp'] if history else 'N/A'}")
 
-    # --- Ejemplo C: Listar dispositivos disponibles ---
-    # Asegúrate de que tu API soporte este endpoint
+    # Example: List devices
     devices = client.list_devices()
-    print(f"📡 Dispositivos en red: {devices}")
+    print(f"Available devices: {devices}")
 
 except OpenFMBError as e:
-    print(f"⚠️ Lógica de control abortada: {e}")
+    print(f"Control logic aborted: {e}")
 ```
