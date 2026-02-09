@@ -47,7 +47,7 @@ El siguiente script muestra cómo inicializar el cliente, verificar la conexión
 from openfmb_client.client import OpenFMBClient, OpenFMBError
 
 # 1. Initialize
-client = OpenFMBClient(base_url="http://172.28.16.179:8000/")
+client = OpenFMBClient(base_url="http://localhost:8000/")
 
 # 2. Check connection (Good practice before control loops)
 if not client.check_health():
