@@ -15,8 +15,23 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("OpenFMB-Client")
 
 class OpenFMBError(Exception):
-    """Base exception for OpenFMB API errors."""
-    pass
+    """Base exception for OpenFMB API errors with optional context."""
+
+    def __init__(
+        self,
+        message: str,
+        status_code: Optional[int] = None,
+        payload: Optional[Dict[str, Any]] = None,
+    ):
+        super().__init__(message)
+        self.message = message
+        self.status_code = status_code
+        self.payload = payload
+
+    def __str__(self) -> str:
+        if self.status_code is not None:
+            return f"{self.message} (status_code={self.status_code})"
+        return self.message
 
 class OpenFMBClient:
     """
@@ -47,19 +62,40 @@ class OpenFMBClient:
             
         except requests.exceptions.Timeout:
             logger.error(f"Timeout connecting to {url}")
-            raise OpenFMBError(f"Request timed out after {self.timeout}s.")
+            raise OpenFMBError(
+                f"Request timed out after {self.timeout}s.",
+                status_code=408,
+                payload={"url": url, "timeout": self.timeout},
+            )
             
         except requests.exceptions.ConnectionError:
             logger.error(f"Connection failed to {url}")
-            raise OpenFMBError("Could not connect to the OpenFMB API.")
+            raise OpenFMBError(
+                "Could not connect to the OpenFMB API.",
+                payload={"url": url},
+            )
             
         except requests.exceptions.HTTPError as e:
-            logger.error(f"HTTP Error {e.response.status_code}: {e.response.text}")
-            raise OpenFMBError(f"API Error: {e.response.status_code}")
+            status_code = e.response.status_code
+            error_payload: Optional[Dict[str, Any]]
+            try:
+                error_payload = e.response.json()
+            except ValueError:
+                error_payload = {"detail": e.response.text}
+
+            logger.error(f"HTTP Error {status_code}: {e.response.text}")
+            raise OpenFMBError(
+                f"API Error: {status_code}",
+                status_code=status_code,
+                payload=error_payload,
+            )
             
         except ValueError:
             logger.error("Invalid JSON received")
-            raise OpenFMBError("API returned invalid JSON.")
+            raise OpenFMBError(
+                "API returned invalid JSON.",
+                payload={"url": url},
+            )
 
     def get_last_state(self, device_uuid: Union[str, UUID]) -> Dict[str, Any]:
         """
@@ -116,34 +152,11 @@ class OpenFMBClient:
         except OpenFMBError:
             return False
 
-# -----------------------------------------------------------------------------
-# Example Usage (Documentation for the user)
-# -----------------------------------------------------------------------------
-if __name__ == "__main__":
-    # 1. Initialize
-    client = OpenFMBClient(base_url="http://172.28.16.179:8000/")
+    def get_devices(self) -> Dict[str, Any]:
+        """
+        Retrieves the list of device UUIDs from the API.
 
-    # 2. Check connection (Good practice before control loops)
-    if not client.check_health():
-        print("System is down!")
-        exit(1)
-
-    # 3. Get Data
-    try:
-        # Example: Real-time control check
-        target_uuid = "00000001-0001-0020-0000-000000000001" # Replace with real UUID
-        last_state = client.get_last_state(target_uuid)
-        print(f"Current Voltage: {last_state['data'].get('voltage', 'N/A')}")
-        
-        # Example: Historical for Analysis
-        from datetime import datetime, timedelta
-        history = client.get_historical_data(
-            target_uuid, 
-            limit=50,
-            start=datetime.now() - timedelta(hours=1)
-        )
-        print(f"Retrieved {len(history)} records.")
-        print(f"First record timestamp: {history[0]['timestamp'] if history else 'N/A'}")
-
-    except OpenFMBError as e:
-        print(f"Control logic aborted: {e}")
+        Returns:
+            Dict with count and device_uuids fields.
+        """
+        return self._request("GET", "/devices")
