@@ -72,7 +72,7 @@ try:
     print(f"First record timestamp: {history[0]['timestamp'] if history else 'N/A'}")
 
     # Example: List devices
-    devices = client.list_devices()
+    devices = client.get_devices()
     print(f"Available devices: {devices}")
 
 except OpenFMBError as e:
