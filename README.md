@@ -38,6 +38,7 @@ requests==2.32.5
 six==1.17.0
 tzdata==2025.3
 urllib3==2.6.3
+```
 
 ## 💡 Ejemplo Completo de Uso
 
