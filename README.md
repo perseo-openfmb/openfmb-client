@@ -16,6 +16,7 @@ La librería se instala directamente desde el repositorio de GitHub utilizando `
 
 ```bash
 pip install git+https://github.com/perseo-openfmb/openfmb-client.git
+```
 
 ## 📋 Requisitos
 
