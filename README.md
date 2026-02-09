@@ -29,7 +29,6 @@ certifi==2026.1.4
 charset-normalizer==3.4.4
 idna==3.11
 numpy==2.2.6
-openfmb-client @ git+https://github.com/perseo-openfmb/openfmb-client.git@99278713593a83b2d543bcd69ce4d7590baf8896
 pandas==2.3.3
 pymodbus==3.7.4
 python-dateutil==2.9.0.post0
