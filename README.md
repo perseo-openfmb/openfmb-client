@@ -59,7 +59,7 @@ try:
     # Example: Real-time control check
     target_uuid = "00000001-0001-0020-0000-000000000001" # Replace with real UUID
     last_state = client.get_last_state(target_uuid)
-    print(f"Current Voltage: {last_state['data'].get('voltage', 'N/A')}")
+    print(f"Current Voltage: {last_state.get('voltage', 'N/A')}")
     
     # Example: Historical for Analysis
     from datetime import datetime, timedelta
