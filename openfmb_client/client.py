@@ -105,13 +105,11 @@ class OpenFMBClient:
             device_uuid: The unique ID of the device (string or UUID object).
 
         Returns:
-            Dict containing timestamp, uuid, and data payload.
+            Dict containing data.
         """
         endpoint = f"/devices/{str(device_uuid)}/last-state"
         data = self._request("GET", endpoint)
-        
-        # Unpack the specific key as per your API definition
-        return data.get("latest_measurement", {})
+        return data
 
     def get_historical_data(
         self, 
